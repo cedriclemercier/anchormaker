@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+  <!--<![endif]-->
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Anchor Text Creator</title>
+    <meta
+      name="description"
+      content="Anchor Text Creator for FAQs, Frequently Asked Questions, Blogs and Content Marketing."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="" />
+    <link rel="stylesheet" text="text/css" href="style.css" />
+  </head>
+  <body>
+    <!-- 
+          <h2>Big title for test</h2>
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+<h2>Secondary Title for testing purpose</h2>
+sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+       -->
+    <div class="container">
+      <div class="row">
+        <h1>Anchor Maker</h1>
+        <hr />
+      </div>
+      <div class="row">
+        <div class="col">
+          <p>Enter HTML tag to replace (without < >):</p>
+          <input
+            id="tag"
+            class="form-control"
+            name="tag"
+            placeholder="e.g h1, h2, h3, p etc.."
+          />
+        </div>
+        <div class="col">
+          <p>Add style to anchor list in CSS (e.g: text-align: left):</p>
+          <textarea
+            id="anchor_list_style"
+            class="form-control"
+            name="anchor_list_style"
+            placeholder="text-align: left"
+          ></textarea>
+        </div>
+        <h2>Paste text:</h2>
+        <p>Make sure there is no other tags in between the ones to replace</p>
+        <div>
+          <textarea
+            id="replace"
+            name="replace"
+            rows="30"
+            class="form-control"
+          ></textarea>
+          <div>
+            <button class="make btn btn-xl btn-primary">Make</button>
+          </div>
+        </div>
+
+        <div>
+          <h2>Text formatted:</h2>
+          <textarea
+            id="replaced"
+            name="replaced"
+            rows="30"
+            class="form-control"
+          ></textarea>
+        </div>
+
+        <div>
+          <h2>Anchors:</h2>
+          <textarea
+            id="anchors"
+            name="anchors"
+            rows="30"
+            class="form-control"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.querySelector(".make").addEventListener("click", transform);
+
+      const tagToReplace = document.querySelector("#tag");
+      const getText = document.querySelector("#replace");
+      const replacedText = document.querySelector("#replaced");
+      const anchors = document.querySelector("#anchors");
+      anchors.value = "";
+      replacedText.value = "";
+
+      function transform() {
+        let entry = getText.value;
+        let start = entry.indexOf(`<${tagToReplace.value}>`);
+        let end = entry.indexOf(`</${tagToReplace.value}>`);
+        let extract = null;
+
+        let arr = [];
+        let count = 0;
+        while (start !== -1) {
+          extract = entry
+            .substring(start, end)
+            .replace(`<${tagToReplace.value}>`, "");
+          console.log("Extracted text: " + extract);
+
+          arr.push(extract);
+          count++;
+          start = entry.indexOf(`<${tagToReplace.value}>`, start + 1);
+          end = entry.indexOf(`</${tagToReplace.value}>`, end + 1);
+        }
+        console.log("Array saved: " + arr);
+
+        const regex = /<${tagToReplace.value}>/gi;
+
+        let c = null;
+        let anchor_array = [];
+
+        for (i of arr) {
+          i = i
+            .toLowerCase()
+            .replace(/\(|\)|\,/g, "")
+            .replace(/\s+/g, "-");
+          anchor_array.push(i);
+          entry = entry.replace(
+            `<${tagToReplace.value}>`,
+            `<${tagToReplace.value} id="${i}">`
+          );
+        }
+
+        console.log(entry);
+
+        console.log("----------------------");
+
+        for (i of anchor_array) {
+          console.log(i);
+        }
+
+        let anchor_links = [];
+        for (i = 0; i < anchor_array.length; i++) {
+          anchor_links.push(
+            `<li style="text-align: left;"><a href="#${anchor_array[i]}">${arr[i]}</a></li>`
+          );
+        }
+        replacedText.value = entry;
+        if (entry) {
+          anchors.value = "<ul>\n" + anchor_links.join("\n") + "\n</ul>";
+        }
+      }
+    </script>
+  </body>
+</html>
